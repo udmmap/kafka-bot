@@ -1,0 +1,5 @@
+rootProject.name = 'kafka-bot'
+include "telegram"
+include "storage"
+
+

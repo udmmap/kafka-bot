@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'eclipse'
+    id 'idea'
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+dependencies {
+    implementation group: 'org.apache.kafka', name: 'kafka-streams', version: '2.7.0'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.30.Final'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '4.0.3'
+}
+
+shadowJar {
+    archiveBaseName.set('storage')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'org.regibot.Main'
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
