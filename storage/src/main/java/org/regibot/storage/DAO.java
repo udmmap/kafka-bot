@@ -42,7 +42,7 @@ public class DAO {
             "  and s.time > now()\n" +
             "order by time";
 
-    private final static String SQL_JOURNAL_INSERT = "insert into journal (id, user_id, schedule_id) values (?, ?, ?)"
+    private final static String SQL_JOURNAL_INSERT = "insert into journal (user_id, schedule_id) values (?, ?)";
 
     private final DataSource dataSource;
 
