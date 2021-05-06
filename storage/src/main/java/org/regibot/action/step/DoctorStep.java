@@ -22,7 +22,7 @@ public class DoctorStep extends Step{
             String message = context.messageStack.peek();
             Matcher matcher = Pattern.compile("^[0-9]+").matcher(message);
             if (matcher.find()) {
-                context.journal.doctorId = Integer.getInteger(message.substring(0, matcher.end()));
+                context.journal.doctorId = Integer.parseInt(message.substring(0, matcher.end()));
             } else {
                 context.messageStack.removeFirst();
                 return writeQuestion(context, dao);

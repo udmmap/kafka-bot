@@ -1,6 +1,6 @@
 package org.regibot.models.db;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Journal {
     public Integer doctorId = null;

@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UserContext {
+    private final Long userId;
+
     public Integer status = 0;
     public final StringBuilder messageOut = new StringBuilder();
     public List<List<KeyboardButton>> keyboard = null;
@@ -17,9 +19,10 @@ public class UserContext {
 
     private Step currentStep;
 
-    public UserContext(Step currentStep){
+    public UserContext(Long userId, Step currentStep){
         this.currentStep = currentStep;
-    };
+        this.userId = userId;
+    }
 
     public Step getCurrentStep() {
         return currentStep;
@@ -27,5 +30,9 @@ public class UserContext {
 
     public void setCurrentStep(Step currentStep) {
         this.currentStep = currentStep;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 }

@@ -2,7 +2,6 @@ package org.regibot.action;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.regibot.action.step.InitStep;
 import org.regibot.action.step.Step;
 import org.regibot.models.telegram.MessageOut;
 import org.regibot.models.telegram.ReplyKeyboardMarkup;
@@ -12,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +29,7 @@ public class Action {
 
     public String perform(String telegramUpdate){
 
-        try (Connection connection = dataSource.getConnection()) {
+        try {
             Long userId;
             UserContext context;
             var objectMapper = new ObjectMapper();
@@ -40,17 +37,23 @@ public class Action {
             Update objUpd = objectMapper.readValue(telegramUpdate, Update.class);
             userId = objUpd.getMessage().getFrom().getId();
             if (!userContexts.containsKey(userId)) {
-              userContexts.putIfAbsent(userId,new UserContext(script));
+              userContexts.putIfAbsent(userId,new UserContext(userId, script));
             }
             context = userContexts.get(userId);
+
+            Step currentStep = context.getCurrentStep();
+            if (currentStep==null){
+                currentStep = script;
+                context.messageStack.clear();
+            }
 
             context.messageStack.push(objUpd.getMessage().getText());
             context.messageOut.setLength(0);
             context.keyboard = null;
 
-            DAO dao = new DAO(connection);
+            DAO dao = new DAO(dataSource);
 
-            context.setCurrentStep(context.getCurrentStep().execute(context, dao));
+            context.setCurrentStep(currentStep.execute(context, dao));
 
             var messageOut = new MessageOut();
             messageOut.setText(context.messageOut.toString());

@@ -1,8 +1,10 @@
 package org.regibot.models.telegram;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageOut {
     @JsonAlias("chat_id")
     private String chatId;

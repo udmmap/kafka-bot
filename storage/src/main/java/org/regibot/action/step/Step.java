@@ -1,13 +1,15 @@
 package org.regibot.action.step;
 
+import org.regibot.action.Action;
 import org.regibot.action.UserContext;
 import org.regibot.storage.DAO;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.LinkedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Step {
+    protected static final Logger logger = LoggerFactory.getLogger(Action.class);
+
     private Step next = null;
     private Step prev = null;
 

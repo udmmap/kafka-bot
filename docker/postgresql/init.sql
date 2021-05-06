@@ -9,7 +9,7 @@ create table clinic.public.schedule (
     , unique  (doctor_id, time)
 );
 create table clinic.public.journal (
-                                       id bigint primary key
+                                       id serial primary key
     , user_id int
     , schedule_id bigint references schedule (id) unique
 );

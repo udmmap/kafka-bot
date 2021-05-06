@@ -7,9 +7,7 @@ import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.ValueMapper;
 import org.regibot.action.Action;
-import org.regibot.action.step.DoctorStep;
-import org.regibot.action.step.InitStep;
-import org.regibot.action.step.Step;
+import org.regibot.action.step.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +35,13 @@ public class Main {
     }
 
     public static void main(String[] args){
+
         Step script = new InitStep().setNext(
-                new DoctorStep()
+                new DoctorStep().setNext(
+                        new DateStep().setNext(
+                                new TimeStep()
+                        )
+                )
         );
 
         Action act = new Action(script, ds);

@@ -1,18 +1,51 @@
 package org.regibot.action.step;
 
 import org.regibot.action.UserContext;
+import org.regibot.models.telegram.KeyboardButton;
 import org.regibot.storage.DAO;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class DateStep extends Step{
+    private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
     @Override
     public Step execute(UserContext context, DAO dao) throws Throwable {
-        return null;
+        try {
+            String message = context.messageStack.peek();
+            context.journal.date = new Date(dateFormat.parse(message).getTime());
+
+            if (getNext() != null) return getNext().writeQuestion(context, dao);
+
+            return this;
+        } catch (Throwable throwable) {
+            context.messageStack.removeFirst();
+
+            return getPrev().writeQuestion(context, dao);
+        }
     }
 
     @Override
     protected Step writeQuestion(UserContext context, DAO dao) throws Throwable {
-
-
-        return this;
+        var dates = dao.getFreeDates(context.journal.doctorId);
+        if (dates.isEmpty()) {
+            context.messageOut.append("\nНет дат для записи.");
+            return getPrev().writeQuestion(context, dao);
+        } else {
+            context.messageOut.append("\nВыберите желаемую дату посещения.");
+            context.keyboard = dates.stream()
+                    .map(dateFormat::format)
+                    .map(s->{
+                        var kb = new KeyboardButton();
+                        kb.setText(s);
+                        return Arrays.asList(kb);
+                    })
+            .collect(Collectors.toList());
+            return this;
+        }
     }
 }
