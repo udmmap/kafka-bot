@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +29,7 @@ public class Action {
     }
 
     public String perform(String recordId, String telegramUpdate){
-        logger.info("record Id {}, message {}", recordId, telegramUpdate);
+        //logger.info("record Id {}, message {}", recordId, telegramUpdate);
 
         try {
             Long userId;
@@ -43,7 +44,11 @@ public class Action {
             context = userContexts.get(userId);
 
             Step currentStep = context.getCurrentStep();
-            if (currentStep==null){
+            if (
+                    currentStep==null
+                    || objUpd.getMessage().getText().equals("отмена")
+                    || objUpd.getMessage().getText().equals("Отмена")
+            ){
                 currentStep = script;
             }
 

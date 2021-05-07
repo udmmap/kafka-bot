@@ -7,6 +7,7 @@ import java.sql.Time;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.regibot.Main;
 import org.slf4j.Logger;
@@ -50,8 +51,8 @@ public class DAO {
         this.dataSource = dataSource;
     }
 
-    public HashMap<Integer,String> getFreeDoctors() throws SQLException {
-        HashMap<Integer,String> doctors = new HashMap<>();
+    public TreeMap<Integer,String> getFreeDoctors() throws SQLException {
+        var doctors = new TreeMap<Integer,String>();
         try (Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(SQL_DOCTOR);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -82,8 +83,8 @@ public class DAO {
         return dates;
     }
 
-    public HashMap<Integer, Timestamp> getFreeTimes(Integer doctorId, Date date) throws SQLException {
-        var times = new HashMap<Integer, Timestamp>();
+    public TreeMap<Integer, Timestamp> getFreeTimes(Integer doctorId, Date date) throws SQLException {
+        var times = new TreeMap<Integer, Timestamp>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_TIMES);
         ) {
