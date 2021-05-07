@@ -10,10 +10,10 @@ import java.util.List;
 public class UserContext {
     private final Long userId;
 
-    public Integer status = 0;
     public final StringBuilder messageOut = new StringBuilder();
+    public String messageIn;
+
     public List<List<KeyboardButton>> keyboard = null;
-    public final LinkedList<String> messageStack = new LinkedList<String>();
 
     public final Journal journal = new Journal();
 

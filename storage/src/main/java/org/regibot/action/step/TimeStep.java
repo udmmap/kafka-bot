@@ -16,31 +16,25 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TimeStep extends Step{
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @Override
     public Step execute(UserContext context, DAO dao) throws Throwable {
         try {
-            String message = context.messageStack.peek();
-            Matcher matcher = Pattern.compile("^[0-9]+").matcher(message);
+            Matcher matcher = Pattern.compile("^\\[[0-9]+\\]").matcher(context.messageIn);
             Integer scheduleId;
             if (matcher.find()) {
-                scheduleId = Integer.parseInt(message.substring(0, matcher.end()));
+                scheduleId = Integer.parseInt(context.messageIn.substring(1, matcher.end()-1));
             } else {
-                context.messageStack.removeFirst();
                 return writeQuestion(context, dao);
             }
 
-            if (dao.setJournal(context.getUserId(), scheduleId)) {
-                context.messageOut.append("Вы успешно записались.");
-            } else {
-                return getPrev().writeQuestion(context, dao);
-            }
+            Integer recId = dao.setJournal(context.getUserId(), scheduleId);
 
+            context.messageOut.append(String.format("Вы успешно записались. Код записи [%d]", recId));
             return null;
-        } catch (Throwable throwable) {
-            context.messageStack.removeFirst();
 
+        } catch (Throwable throwable) {
             logger.error("User "+context.getUserId().toString(), throwable);
 
             return getPrev().writeQuestion(context, dao);
@@ -59,8 +53,9 @@ public class TimeStep extends Step{
                     .map((Map.Entry<Integer, Timestamp> entry)->{
                         var kb = new KeyboardButton();
                         kb.setText(
-                                entry.getKey().toString()
-                                + ". "
+                                "["
+                                + entry.getKey().toString()
+                                + "] "
                                 + entry.getValue().toLocalDateTime().format(dateTimeFormatter)
                         );
                         return Arrays.asList(kb);})

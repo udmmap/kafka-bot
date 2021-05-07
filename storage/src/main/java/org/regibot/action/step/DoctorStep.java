@@ -19,12 +19,10 @@ public class DoctorStep extends Step{
     public Step execute(UserContext context, DAO dao) throws Throwable {
 
         try {
-            String message = context.messageStack.peek();
-            Matcher matcher = Pattern.compile("^[0-9]+").matcher(message);
+            Matcher matcher = Pattern.compile("^\\[[0-9]+\\]").matcher(context.messageIn);
             if (matcher.find()) {
-                context.journal.doctorId = Integer.parseInt(message.substring(0, matcher.end()));
+                context.journal.doctorId = Integer.parseInt(context.messageIn.substring(1, matcher.end()-1));
             } else {
-                context.messageStack.removeFirst();
                 return writeQuestion(context, dao);
             }
 
@@ -32,7 +30,7 @@ public class DoctorStep extends Step{
 
             return this;
         } catch (Throwable throwable) {
-            context.messageStack.removeFirst();
+            logger.error("User "+context.getUserId().toString(), throwable);
 
             return getPrev().writeQuestion(context, dao);
         }
@@ -49,7 +47,7 @@ public class DoctorStep extends Step{
             context.keyboard = doctors.entrySet().stream()
                     .map((Map.Entry<Integer,String> entry)->{
                         var kb = new KeyboardButton();
-                        kb.setText(entry.getKey().toString() + ". " + entry.getValue());
+                        kb.setText("[" + entry.getKey().toString() + "] " + entry.getValue());
                         return Arrays.asList(kb);})
                     .collect(Collectors.toList());
             return this;

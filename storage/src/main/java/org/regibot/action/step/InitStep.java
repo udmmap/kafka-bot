@@ -14,7 +14,6 @@ public class InitStep extends Step{
     @Override
     protected Step writeQuestion(UserContext context, DAO dao) {
         context.messageOut.append("\nЗапись невозможна");
-        context.status = 1;
         return this;
     }
 }

@@ -16,14 +16,13 @@ public class DateStep extends Step{
     @Override
     public Step execute(UserContext context, DAO dao) throws Throwable {
         try {
-            String message = context.messageStack.peek();
-            context.journal.date = new Date(dateFormat.parse(message).getTime());
+            context.journal.date = new Date(dateFormat.parse(context.messageIn).getTime());
 
             if (getNext() != null) return getNext().writeQuestion(context, dao);
 
             return this;
         } catch (Throwable throwable) {
-            context.messageStack.removeFirst();
+            logger.error("User "+context.getUserId().toString(), throwable);
 
             return getPrev().writeQuestion(context, dao);
         }

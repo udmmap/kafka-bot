@@ -27,7 +27,8 @@ public class Action {
         this.dataSource = dataSource;
     }
 
-    public String perform(String telegramUpdate){
+    public String perform(String recordId, String telegramUpdate){
+        logger.info("record Id {}, message {}", recordId, telegramUpdate);
 
         try {
             Long userId;
@@ -44,10 +45,9 @@ public class Action {
             Step currentStep = context.getCurrentStep();
             if (currentStep==null){
                 currentStep = script;
-                context.messageStack.clear();
             }
 
-            context.messageStack.push(objUpd.getMessage().getText());
+            context.messageIn = objUpd.getMessage().getText();
             context.messageOut.setLength(0);
             context.keyboard = null;
 

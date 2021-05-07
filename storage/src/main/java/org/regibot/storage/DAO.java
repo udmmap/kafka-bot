@@ -36,8 +36,8 @@ public class DAO {
     private final static String SQL_TIMES = "select s.id, s.time\n" +
             "from schedule s\n" +
             "where\n" +
-            "  s.doctor_id = :doctor_id\n" +
-            "  and s.time::date = '2021-12-01'\n" +
+            "  s.doctor_id = ?\n" +
+            "  and s.time::date = ?\n" +
             "  and s.id not in (select j.schedule_id from journal j)\n" +
             "  and s.time > now()\n" +
             "order by time";
@@ -99,15 +99,20 @@ public class DAO {
         return times;
     }
 
-    public Boolean setJournal(Long userId, Integer scheduleId) throws SQLException {
-        Boolean res = false;
+    public Integer setJournal(Long userId, Integer scheduleId) throws SQLException {
+        Integer res = 0;
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQL_JOURNAL_INSERT);
+             PreparedStatement preparedStatement = connection.prepareStatement(SQL_JOURNAL_INSERT, Statement.RETURN_GENERATED_KEYS);
         ) {
             preparedStatement.setLong(1, userId);
             preparedStatement.setInt(2, scheduleId);
 
-            res = preparedStatement.execute();
+            preparedStatement.executeUpdate();
+
+            ResultSet tableKeys = preparedStatement.getGeneratedKeys();
+            tableKeys.next();
+            res = tableKeys.getInt(1);
+
         }
         return res;
     }

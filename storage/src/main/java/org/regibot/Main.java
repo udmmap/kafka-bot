@@ -6,6 +6,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.ValueMapper;
+import org.apache.kafka.streams.kstream.ValueMapperWithKey;
 import org.regibot.action.Action;
 import org.regibot.action.step.*;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class Main {
 
         Action act = new Action(script, ds);
 
+        // ToDo Переместить параметры в файл
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "telegramPipe");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -54,7 +56,12 @@ public class Main {
 
         KStream inputStream = builder.stream("topicIn");
         inputStream
-                .mapValues((ValueMapper<String, String>) act::perform)
+                .mapValues(new ValueMapperWithKey<String,String,String>() {
+                    @Override
+                    public String apply(String readOnlyKey, String value) {
+                        return act.perform(readOnlyKey, value);
+                    }
+                })
                 .to("topicOut");
 
         Topology topology = builder.build();
