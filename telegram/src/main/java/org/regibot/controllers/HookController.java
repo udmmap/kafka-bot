@@ -32,26 +32,6 @@ public class HookController {
 
     }
 
-    /*
-    private void initBot(){
-        String urlTelegram = "https://api.telegram.org/bot"+this.tokenBot;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        String requestJson = "{}";
-
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(new URI(urlTelegram), HttpMethod.POST, entity, String.class);
-            logger.info("Result - status ("+ response.getStatusCode() + ") has body: " + response.hasBody() + " Response ="+response.getBody());
-        } catch (URISyntaxException e) {
-            logger.error("cant initiate hook", e);
-        }
-
-    }
-    */
-
     @PostMapping("/regibot/hook")
     public ResponseEntity Hook(@RequestBody String upd){
         var objectMapper = new ObjectMapper();
